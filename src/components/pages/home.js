@@ -3,20 +3,10 @@ import { h } from 'preact'
 
 const HomePage = ({baseDataStatus, baseData}) => (
   <article>
-    <p>Open dev tools to see output of debug bundle. The current version of redux-bundler you're running, the list of installed bundles, etc.</p>
-    <p>This app uses the awesome <a href='https://swapi.co/'>SWAPI</a> as an API to demonstrate how you can reactively trigger data fetching due to the the application's current state rather than by some arbitrary component being displayed.</p>
-
-    <p>It will never fetch unless its data is stale, or it needs to retry to do a failed attempt to fetch</p>
-
-    <p>This entire app with all dependencies and without any tree-shaking is approx 18.5 kbs min + gzip</p>
-
-    <h3>Things to try</h3>
-    <ul>
-      <li class='mb2'>Leave this page open, and watch the log output in the console. The data will be refreshed if its older than one minute.</li>
-      <li class='mb2'>While you have the page loaded, use devtools to force the app to go offline. It will keep showing the data it has, but will now retry more actively. These fetches will fail, but it will still show the data it has. Now, make it go online again, and you should see the data getting refreshed rather quickly.</li>
-      <li class='mb2'>The "APP_IDLE" actions will only be dispatched when the tab is in focus. Test this out by opening the network tab in devtools and clearing it, now switching away to a different tab for a while. When you switch back you'll notice no fetches occured while you were away, but as soon as you switch back to this tab a fetch is immediately triggered.</li>
-      <li class='mb3'>Whenever there has been a successful fetch, the data is persisted to indexedDB via the localCaching bundle (including metadata about the fetch). So if you refresh and it successfully fetched data recentl enough, no fetch is triggered at all.</li>
-    </ul>
+    <p>Open dev tools to see output of debug bundle</p>
+    <p>So the intresting thing here is the entire application is basically running in a web worker</p>
+    <p>Open the network tab and you'll notice there's a lot more code in /build/worker.js than in main.js</p>
+    <p>URL state is still stored in, and controlled by redux. But bound to the browser. So clicking a link, triggers a doUpdateUrl action creator, which sends that action to the worker, which processes it, and the new url state is echoed back to the main thread, where it it applied to the browser.</p>
 
     <div class='ph3 ba br3 bg-lightest-blue'>
       <h3>Dynamically Fetched Data:</h3>
