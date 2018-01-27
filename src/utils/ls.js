@@ -1,4 +1,4 @@
-import tryIt from 'tryIt'
+import tryIt from 'tryit'
 
 export const getValue = (name) => {
   let val
