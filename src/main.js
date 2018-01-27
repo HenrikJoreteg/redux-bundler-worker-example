@@ -10,7 +10,7 @@ const selectorNameToValueName = name => {
 }
 
 const init = () => {
-  const worker = window.worker = new Worker('/b/w.js')
+  const worker = window.worker = new Worker('/build/worker.js')
   const post = (val) => worker.postMessage(val)
 
   post({

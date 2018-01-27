@@ -11,7 +11,7 @@ const IS_PROD = process.env.NODE_ENV === 'production'
 const baseConfig = {
   plugins: [
     css({
-      output: './public/b/s.css',
+      output: './public/build/s.css',
       minify: IS_PROD
     }),
     json(),
@@ -35,14 +35,14 @@ export default [
     input: 'src/worker',
     output: {
       format: 'iife',
-      file: 'public/b/w.js' 
+      file: 'public/build/worker.js' 
     } 
   }),
   getConfig({
     input: 'src/main',
     output: {
       format: 'iife',
-      file: 'public/b/m.js' 
+      file: 'public/build/main.js' 
     } 
   })
 ]
