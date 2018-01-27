@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "lite-server --baseDir=public & rollup -c -w",
-    "build": "rollup -c"
+    "build": "NODE_ENV=production rollup -c"
   },
   "author": "Henrik Joreteg <henrik@joreteg.com> (joreteg.com)",
   "license": "MIT",
