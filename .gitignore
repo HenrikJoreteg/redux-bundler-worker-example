@@ -4,3 +4,4 @@ npm-debug.logo
 .vscode
 dist
 .cache
+public/b
