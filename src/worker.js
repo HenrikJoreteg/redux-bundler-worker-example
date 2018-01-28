@@ -25,7 +25,9 @@ self.onmessage = ({data}) => {
   } 
   else if (type === 'callback') {
     self[cbId](data)
-    delete self[cbId]
+    if (data.once) {
+      delete self[cbId]
+    }
   } 
   else if (type === 'action') {
     const args = payload || []

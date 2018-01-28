@@ -13,52 +13,6 @@ export default (worker, debug = false) => {
   const watchedSelectors = {}
   const watchedValues = {}
 
-  worker.onmessage = ({data}) => {
-    if (debug) {
-      console.log('📦 received from worker', data)
-    }
-    if (typeof data === 'string') {
-      tryIt(() => {
-        (new Function('worker', data))(worker) // eslint-disable-line
-      }, (err) => {
-        if (err) {
-          console.error(err)
-        }
-      })
-      return
-    }
-    if (data.urlRaw) {
-      const { url } = data.urlRaw
-      if (url !== window.location.href) {
-        tryIt(() => {
-          window.history[data.urlRaw.replace ? 'replaceState' : 'pushState']({}, null, url)
-          document.body.scrollTop = 0
-        })
-      }
-    }
-    Object.assign(combinedData, data)
-    
-    // look through subscriptions to trigger
-    subscriptions.forEach(subscription => {
-      const relevantChanges = {}
-      let hasChanged = false
-      if (subscription.names === 'all') {
-        Object.assign(relevantChanges, data)
-        hasChanged = !!Object.keys(relevantChanges).length
-      } else {
-        subscription.names.forEach(name => {
-          if (data.hasOwnProperty(name)) {
-            relevantChanges[name] = data[name]
-            hasChanged = true
-          }
-        })
-      }
-      if (hasChanged) {
-        subscription.fn(relevantChanges)
-      }
-    })
-  }
-
   const watch = selectorName => {
     watchedSelectors[selectorName] = (watchedSelectors[selectorName] || 0) + 1
   }
@@ -79,7 +33,7 @@ export default (worker, debug = false) => {
       return obj
     }, {})
 
-  return {
+  const store = {
     getAll: () => combinedData,
     select,
     subscribeToSelectors: (keys, callback) => {
@@ -104,4 +58,47 @@ export default (worker, debug = false) => {
       worker.postMessage({type: 'action', name, payload: args})
     }
   }
+
+  worker.onmessage = ({data}) => {
+    if (debug) {
+      console.log('📦 received from worker', data)
+    }
+    if (typeof data === 'string') {
+      (new Function(data))()
+      return
+    }
+    if (data.urlRaw) {
+      const { url } = data.urlRaw
+      if (url !== window.location.href) {
+        tryIt(() => {
+          window.history[data.urlRaw.replace ? 'replaceState' : 'pushState']({}, null, url)
+          document.body.scrollTop = 0
+        })
+      }
+    }
+    
+    Object.assign(combinedData, data)
+    
+    // look through subscriptions to trigger
+    subscriptions.forEach(subscription => {
+      const relevantChanges = {}
+      let hasChanged = false
+      if (subscription.names === 'all') {
+        Object.assign(relevantChanges, data)
+        hasChanged = !!Object.keys(relevantChanges).length
+      } else {
+        subscription.names.forEach(name => {
+          if (data.hasOwnProperty(name)) {
+            relevantChanges[name] = data[name]
+            hasChanged = true
+          }
+        })
+      }
+      if (hasChanged) {
+        subscription.fn(relevantChanges)
+      }
+    })
+  }
+
+  return store
 }

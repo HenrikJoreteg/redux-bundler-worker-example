@@ -1,10 +1,12 @@
 export default (fn, ...args) => {
+  // skip everything if we're already on main
+  // making it safe to use this in bundles that
+  // may already be running on main
   if (typeof window !== 'undefined') {
     fn(...args)
   } else {
-    const last = args.slice(-1)[0]
     let argString = ''
-    if (typeof last !== 'undefined') {
+    if (args.length) {
       argString = args.reduce((accum, val, index) => {
         const type = typeof val
         const isLast = index === args.length - 1
@@ -12,7 +14,7 @@ export default (fn, ...args) => {
         if (isFunction) {
           if (isLast) {
             const id = Math.random().toString()
-            accum.push(`function(err,payload){worker.postMessage({type:'callback',cbId:'${id}',error:err,payload:payload})}`)
+            accum.push(`function(err,payload){worker.postMessage({type:'callback',cbId:'${id}',once:false,error:err,payload:payload})}`)
             self[id] = (data) => val(data.error, data.payload)
           } else {
             accum.push(val.toString())
