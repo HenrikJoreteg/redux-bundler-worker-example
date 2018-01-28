@@ -15,7 +15,7 @@
     "milliseconds": "1.0.3",
     "preact": "8.2.7",
     "preact-nav-helper": "1.0.0",
-    "redux-bundler": "16.1.0",
+    "redux-bundler": "16.1.1",
     "redux-bundler-preact": "1.1.0",
     "rollup": "0.55.1",
     "rollup-plugin-buble": "0.18.0",
