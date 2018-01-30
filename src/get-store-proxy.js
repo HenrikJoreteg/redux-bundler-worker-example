@@ -1,12 +1,7 @@
 import tryIt from 'tryit'
-
-const selectorNameToValueName = name => {
-  const start = name[0] === 's' ? 6 : 5
-  return name[start].toLowerCase() + name.slice(start + 1)
-}
+import { selectorNameToValueName } from 'redux-bundler'
 
 export default (worker, debug = false) => {
-  const subs = []
   const combinedData = {}
 
   const subscriptions = new Set()
@@ -43,11 +38,11 @@ export default (worker, debug = false) => {
       }
       subscriptions.add(subscription)
       keys.forEach(watch)
-  
+
       // make sure starting values are in watched so we can
       // track changes
       Object.assign(watchedValues, select(keys))
-  
+
       // return function that can be used to unsubscribe
       return () => {
         subscriptions.delete(subscription)
@@ -64,7 +59,7 @@ export default (worker, debug = false) => {
       console.log('📦 received from worker', data)
     }
     if (typeof data === 'string') {
-      (new Function(data))()
+      (new Function(data))() // eslint-ignore-line
       return
     }
     if (data.urlRaw) {
@@ -76,9 +71,9 @@ export default (worker, debug = false) => {
         })
       }
     }
-    
+
     Object.assign(combinedData, data)
-    
+
     // look through subscriptions to trigger
     subscriptions.forEach(subscription => {
       const relevantChanges = {}

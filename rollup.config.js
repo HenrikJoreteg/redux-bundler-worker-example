@@ -34,14 +34,14 @@ export default [
   getConfig({
     input: 'src/worker',
     output: {
-      format: 'iife',
+      format: 'umd',
       file: 'public/build/worker.js' 
     } 
   }),
   getConfig({
     input: 'src/main',
     output: {
-      format: 'iife',
+      format: 'umd',
       file: 'public/build/main.js' 
     } 
   })
