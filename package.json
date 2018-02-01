@@ -24,7 +24,8 @@
     "rollup-plugin-node-resolve": "3.0.2",
     "rollup-plugin-replace": "2.0.0",
     "rollup-plugin-uglify": "3.0.0",
-    "tryit": "1.0.3"
+    "tryit": "1.0.3",
+    "worker-proof": "1.0.0"
   },
   "devDependencies": {
     "babel-preset-env": "1.6.1",

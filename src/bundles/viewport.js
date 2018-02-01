@@ -1,4 +1,4 @@
-import runOnMain from '../utils/run-on-main'
+import { workerProof } from 'worker-proof'
 import { debounce } from 'redux-bundler'
 
 export default {
@@ -18,7 +18,7 @@ export default {
   doTrackWindowResize: dimensions => ({type: 'WINDOW_RESIZED', payload: dimensions}),
   init: store => {
     const callback = debounce(store.doTrackWindowResize, 200)
-    runOnMain((cb, debounce) => {
+    workerProof((cb, debounce) => {
       cb({
         height: window.innerHeight,
         width: window.innerWidth

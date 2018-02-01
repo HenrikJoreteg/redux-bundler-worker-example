@@ -9,7 +9,7 @@ import createStore from './bundles'
 const dataPromise = getAllCached({ version: 1, maxAge: ms.weeks(1) })
 let store
 
-self.onmessage = ({data}) => {
+self.addEventListener('message', ({data}) => {
   console.log('📦 sent to worker', data)
   const { cbId, type, payload, name } = data
 
@@ -17,9 +17,9 @@ self.onmessage = ({data}) => {
     dataPromise
       .then(cached => {
         store = createStore(Object.assign({}, cached, payload))
-        self.postMessage(store.selectAll())
+        self.postMessage({type: 'changes', changes: store.selectAll()})
         store.subscribeToAllChanges(changes => {
-          self.postMessage(changes)
+          self.postMessage({type: 'changes', changes: changes})
         })
       })
   } 
@@ -37,4 +37,4 @@ self.onmessage = ({data}) => {
     }
     fn(...args)
   }
-}
+})

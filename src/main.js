@@ -2,10 +2,12 @@ import { render } from 'preact'
 import rootComp from './components/root'
 import { getValue } from './utils/ls'
 import getStoreProxy from './get-store-proxy'
+import { enable } from 'worker-proof'
 const debug = getValue('debug')
 
 const init = () => {
-  const worker = window.worker = new Worker('/build/worker.js')
+  const worker = new Worker('/build/worker.js')
+  enable(worker)
   
   worker.postMessage({
     type: 'initial',

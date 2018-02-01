@@ -54,37 +54,39 @@ export default (worker, debug = false) => {
     }
   }
 
-  worker.onmessage = ({data}) => {
-    if (debug) {
-      console.log('📦 received from worker', data)
-    }
-    if (typeof data === 'string') {
-      (new Function(data))() // eslint-ignore-line
+  worker.addEventListener('message', e => {
+    if (e.data.type !== 'changes') {
       return
     }
-    if (data.urlRaw) {
-      const { url } = data.urlRaw
+    
+    const { changes } = e.data
+
+    if (debug) {
+      console.log('📦 got changes from worker', changes)
+    }
+    if (changes.urlRaw) {
+      const { url } = changes.urlRaw
       if (url !== window.location.href) {
         tryIt(() => {
-          window.history[data.urlRaw.replace ? 'replaceState' : 'pushState']({}, null, url)
+          window.history[changes.urlRaw.replace ? 'replaceState' : 'pushState']({}, null, url)
           document.body.scrollTop = 0
         })
       }
     }
 
-    Object.assign(combinedData, data)
+    Object.assign(combinedData, changes)
 
     // look through subscriptions to trigger
     subscriptions.forEach(subscription => {
       const relevantChanges = {}
       let hasChanged = false
       if (subscription.names === 'all') {
-        Object.assign(relevantChanges, data)
+        Object.assign(relevantChanges, changes)
         hasChanged = !!Object.keys(relevantChanges).length
       } else {
         subscription.names.forEach(name => {
-          if (data.hasOwnProperty(name)) {
-            relevantChanges[name] = data[name]
+          if (changes.hasOwnProperty(name)) {
+            relevantChanges[name] = changes[name]
             hasChanged = true
           }
         })
@@ -93,7 +95,7 @@ export default (worker, debug = false) => {
         subscription.fn(relevantChanges)
       }
     })
-  }
+  })
 
   return store
 }
