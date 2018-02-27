@@ -1,40 +1,18 @@
+// polyfill fetch since it's not always available:
+// https://nolanlawson.github.io/html5workertest/
 if (!self.fetch) {
-  importScripts('https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.1/fetch.min.js')
+  importScripts(
+    'https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.1/fetch.min.js'
+  )
 }
 
-import ms from 'milliseconds'
+import { setUpWorker } from 'redux-bundler-worker'
 import { getAllCached } from 'redux-bundler'
-import createStore from './bundles'
+import getStore from './bundles'
 
-const dataPromise = getAllCached({ version: 1, maxAge: ms.weeks(1) })
-let store
+const getStoreWithData = initialData =>
+  getAllCached({ maxAge: 1000 * 60 * 60, version: 1 })
+    .then(cached => Object.assign({}, cached, initialData))
+    .then(getStore)
 
-self.addEventListener('message', ({data}) => {
-  console.log('📦 sent to worker', data)
-  const { cbId, type, payload, name } = data
-
-  if (type === 'initial') {
-    dataPromise
-      .then(cached => {
-        store = createStore(Object.assign({}, cached, payload))
-        self.postMessage({type: 'changes', changes: store.selectAll()})
-        store.subscribeToAllChanges(changes => {
-          self.postMessage({type: 'changes', changes: changes})
-        })
-      })
-  } 
-  else if (type === 'callback') {
-    self[cbId](data)
-    if (data.once) {
-      delete self[cbId]
-    }
-  } 
-  else if (type === 'action') {
-    const args = payload || []
-    const fn = store[name]
-    if (!fn) {
-      throw Error(`💥 no action ${name} on store`)
-    }
-    fn(...args)
-  }
-})
+setUpWorker(getStoreWithData)

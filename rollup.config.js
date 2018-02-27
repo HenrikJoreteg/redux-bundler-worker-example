@@ -4,7 +4,7 @@ import commonjs from 'rollup-plugin-commonjs'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import replace from 'rollup-plugin-replace'
 import uglify from 'rollup-plugin-uglify'
-import css from './rollup-plugins/rollup-plugin-css'
+import css from '@henrikjoreteg/rollup-plugin-css'
 
 const IS_PROD = process.env.NODE_ENV === 'production'
 
@@ -26,8 +26,7 @@ if (IS_PROD) {
   baseConfig.plugins.push(uglify())
 }
 
-const getConfig = (opts) =>
-  Object.assign({}, baseConfig, opts)
+const getConfig = opts => Object.assign({}, baseConfig, opts)
 
 const hasNoFileExtension = /^(?!.*\.\w{1,7}$)/
 export default [
@@ -35,14 +34,14 @@ export default [
     input: 'src/worker',
     output: {
       format: 'umd',
-      file: 'public/build/worker.js' 
-    } 
+      file: 'public/build/worker.js'
+    }
   }),
   getConfig({
     input: 'src/main',
     output: {
       format: 'umd',
-      file: 'public/build/main.js' 
-    } 
+      file: 'public/build/main.js'
+    }
   })
 ]
