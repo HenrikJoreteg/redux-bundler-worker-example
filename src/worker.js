@@ -15,4 +15,4 @@ const getStoreWithData = initialData =>
     .then(cached => Object.assign({}, cached, initialData))
     .then(getStore)
 
-setUpWorker(getStoreWithData)
+setUpWorker(getStoreWithData, true)
