@@ -7,11 +7,12 @@ if (!self.fetch) {
 }
 
 import { setUpWorker } from 'redux-bundler-worker'
-import { getAllCached } from 'redux-bundler'
+import cache from './utils/cache'
 import getStore from './bundles'
 
 const getStoreWithData = initialData =>
-  getAllCached({ maxAge: 1000 * 60 * 60, version: 1 })
+  cache
+    .getAll()
     .then(cached => Object.assign({}, cached, initialData))
     .then(getStore)
 

@@ -3,7 +3,7 @@ import navHelper from 'internal-nav-helper'
 import { connect } from 'redux-bundler-preact'
 import componentMap from './pages'
 
-const Layout = ({ doUpdateUrl, currentComponent, pathname }) => {
+const Layout = ({ doUpdateUrl, route, pathname }) => {
   const navItems = [
     { url: '/', label: 'Home' },
     { url: '/people', label: 'People List' },
@@ -11,7 +11,7 @@ const Layout = ({ doUpdateUrl, currentComponent, pathname }) => {
     { url: 'https://github.com/henrikjoreteg/redux-bundler', label: 'GitHub' }
   ]
 
-  const Page = componentMap[currentComponent]
+  const Page = componentMap[route]
   return (
     <main
       onClick={navHelper(doUpdateUrl)}
@@ -47,9 +47,4 @@ const Layout = ({ doUpdateUrl, currentComponent, pathname }) => {
   )
 }
 
-export default connect(
-  'selectCurrentComponent',
-  'selectPathname',
-  'doUpdateUrl',
-  Layout
-)
+export default connect('selectRoute', 'selectPathname', 'doUpdateUrl', Layout)
